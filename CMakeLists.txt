@@ -26,6 +26,10 @@ feature_option(WEBUI "Enable built-in HTTP server for remote control" ON)
 feature_option(PLUGINS "Enable built-in Lua plugins engine" ON)
 feature_option(STACKTRACE "Enable stacktrace support" ON)
 feature_option(TESTING "Build internal testing suite" OFF)
+feature_option_dependent(EMBARR_ENGINE
+    "Build the headless Embarr download engine (embarr-engine) instead of qbittorrent-nox"
+    OFF "NOT GUI;WEBUI" OFF
+)
 feature_option(VERBOSE_CONFIGURE "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure output (only useful for debugging the CMake build scripts)" OFF)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
