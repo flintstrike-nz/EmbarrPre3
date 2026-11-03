@@ -28,6 +28,8 @@
 
 #include "embarrengine.h"
 
+#include <algorithm>
+
 #include <QCoreApplication>
 #include <QString>
 
@@ -40,7 +42,15 @@
 void EmbarrEngine::applySettings()
 {
     const QString apiKey = qEnvironmentVariable(API_KEY_ENV);
-    if (!Utils::APIKey::isValid(apiKey))
+
+    // Utils::APIKey::isValid() only checks prefix and length. Also require the generated
+    // ASCII-alphanumeric format: anything else (e.g. trailing whitespace, which HTTP header
+    // parsing trims) would leave the engine running but unreachable.
+    const auto isAlphanumeric = [](const QChar c) { return (c.unicode() < 128) && c.isLetterOrNumber(); };
+    const bool isWellFormed = Utils::APIKey::isValid(apiKey)
+        && std::all_of((apiKey.cbegin() + 4), apiKey.cend(), isAlphanumeric);
+
+    if (!isWellFormed)
     {
         throw RuntimeError(QCoreApplication::translate("EmbarrEngine"
             , "%1 is missing or invalid. embarr-engine must be started by Embarr.").arg(QString::fromLatin1(API_KEY_ENV)));

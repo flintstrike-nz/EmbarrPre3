@@ -385,7 +385,9 @@ Application::Application(int &argc, char **argv)
         Preferences::instance()->setWebUIPort(m_commandLineArgs.webUIPort);
 
 #ifdef EMBARR_ENGINE
-    EmbarrEngine::applySettings();
+    // --help/--version only print and exit (handled in main), so they don't need a key.
+    if (!m_commandLineArgs.showHelp && !m_commandLineArgs.showVersion)
+        EmbarrEngine::applySettings();
 #endif
 
     if (m_commandLineArgs.torrentingPort > 0) // it will be -1 when user did not set any value

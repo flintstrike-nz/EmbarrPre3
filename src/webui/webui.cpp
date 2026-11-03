@@ -75,9 +75,21 @@ void WebUI::configure()
     {
         const quint16 port = pref->getWebUIPort();
 
+#ifdef EMBARR_ENGINE
+        // embarr-engine's API is private to Embarr: always loopback, plain HTTP and never
+        // port-forwarded, whatever the preferences say (they can be changed at runtime).
+        const bool useUPnP = false;
+        const QString serverAddressString = u"127.0.0.1"_s;
+        const bool useHttps = false;
+#else
+        const bool useUPnP = pref->useUPnPForWebUIPort();
+        const QString serverAddressString = pref->getWebUIAddress();
+        const bool useHttps = pref->isWebUIHttpsEnabled();
+#endif
+
         // Port forwarding
         auto *portForwarder = Net::PortForwarder::instance();
-        if (pref->useUPnPForWebUIPort())
+        if (useUPnP)
         {
             portForwarder->setPorts(portForwardingProfile, {port});
         }
@@ -87,7 +99,6 @@ void WebUI::configure()
         }
 
         // http server
-        const QString serverAddressString = pref->getWebUIAddress();
         const auto serverAddress = ((serverAddressString == u"*") || serverAddressString.isEmpty())
             ? QHostAddress::Any : QHostAddress(serverAddressString);
 
@@ -105,7 +116,7 @@ void WebUI::configure()
         m_webapp->setUsername(username);
         m_webapp->setPasswordHash(passwordHash);
 
-        if (pref->isWebUIHttpsEnabled())
+        if (useHttps)
         {
             const auto readData = [](const Path &path) -> QByteArray
             {
@@ -140,8 +151,13 @@ void WebUI::configure()
             }
         }
 
-        // DynDNS
-        if (pref->isDynDNSEnabled())
+        // DynDNS (never in embarr-engine: its API isn't reachable from outside)
+#ifdef EMBARR_ENGINE
+        const bool useDynDNS = false;
+#else
+        const bool useDynDNS = pref->isDynDNSEnabled();
+#endif
+        if (useDynDNS)
         {
             if (!m_dnsUpdater)
                 m_dnsUpdater = new Net::DNSUpdater(this);
