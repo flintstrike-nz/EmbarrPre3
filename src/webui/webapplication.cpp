@@ -691,6 +691,13 @@ void WebApplication::processRequest(const Http::Request &request, const Http::En
 
     try
     {
+#ifdef EMBARR_ENGINE
+        // embarr-engine is only reachable with the API key Embarr passes in. Password
+        // logins, Basic auth and cookie sessions are refused even if a password is saved.
+        if (!isUsingApiKey)
+            throw UnauthorizedHTTPError();
+#endif
+
         // block suspicious requests
         // CSRF check is skipped for the webroot so that cross-origin hyperlinks to
         // the WebUI succeed; the root document is static and has no side effects.
@@ -921,11 +928,14 @@ void WebApplication::sessionStartImpl(const QString &sessionId, const WebSession
     {
         return new TorrentCreatorController(torrentCreationManager, app, parent);
     });
+#ifndef EMBARR_ENGINE
+    // Embarr searches indexers itself; the engine exposes no search API.
     m_currentSession->registerAPIController(u"search"_s
             , [app = app(), parent = m_currentSession, searchJobManager = m_searchJobManager]
     {
         return new SearchController(searchJobManager, app, parent);
     });
+#endif
     m_currentSession->registerAPIController(u"sync"_s
             , [app = app(), parent = m_currentSession, btSession = BitTorrent::Session::instance()]
     {

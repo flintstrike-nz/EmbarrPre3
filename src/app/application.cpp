@@ -92,6 +92,9 @@
 #include "base/utils/string.h"
 #include "base/version.h"
 #include "applicationinstancemanager.h"
+#ifdef EMBARR_ENGINE
+#include "embarrengine.h"
+#endif
 #include "filelogger.h"
 #include "upgrade.h"
 
@@ -380,6 +383,12 @@ Application::Application(int &argc, char **argv)
 
     if (m_commandLineArgs.webUIPort > 0) // it will be -1 when user did not set any value
         Preferences::instance()->setWebUIPort(m_commandLineArgs.webUIPort);
+
+#ifdef EMBARR_ENGINE
+    // --help/--version only print and exit (handled in main), so they don't need a key.
+    if (!m_commandLineArgs.showHelp && !m_commandLineArgs.showVersion)
+        EmbarrEngine::applySettings();
+#endif
 
     if (m_commandLineArgs.torrentingPort > 0) // it will be -1 when user did not set any value
     {
@@ -1039,6 +1048,8 @@ int Application::exec()
                     , QString::number(m_webui->port()));
             printf("%s\n", qUtf8Printable(tr("To control qBittorrent, access the WebUI at: %1").arg(url)));
 
+#ifndef EMBARR_ENGINE
+            // embarr-engine is only reached with an API key, so don't print a password.
             if (!tempPassword.isEmpty())
             {
                 const QString warning = tr("The WebUI administrator username is: %1").arg(pref->getWebUIUsername()) + u'\n'
@@ -1046,6 +1057,7 @@ int Application::exec()
                         + tr("You should set your own password in program preferences.") + u'\n';
                 printf("%s", qUtf8Printable(warning));
             }
+#endif
         }
         else
         {
