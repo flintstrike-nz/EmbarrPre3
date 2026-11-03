@@ -33,8 +33,12 @@ Embarr shows qBittorrent's legal notice to the user itself, so it passes `--conf
 | WebUI address | `127.0.0.1` | Private API, never on the network |
 | UPnP for WebUI, HTTPS, alternative WebUI | off | Not needed on loopback |
 | Local-host auth bypass, subnet whitelist | off | The API key is the only way in |
-| Search engine | off | Embarr searches indexers itself |
+| Search engine | off, and the `search` API isn't registered | Embarr searches indexers itself |
 | `.!qB` extension for incomplete files | on | Embarr downloads straight into the library |
 | "Unwanted" folder | off | Unwanted files are never downloaded |
 
 The temporary WebUI password is not printed in engine mode.
+
+Every request must carry the API key (`X-API-Key` or `Authorization: Bearer`). Password logins, Basic authentication and cookie sessions are refused even if a WebUI password is saved in the profile.
+
+`EMBARR_ENGINE` requires `GUI=OFF` and `WEBUI=ON`, and can't be combined with `SYSTEMD` (Embarr supervises the engine itself); CMake stops with an error otherwise.

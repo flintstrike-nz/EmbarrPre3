@@ -26,10 +26,7 @@ feature_option(WEBUI "Enable built-in HTTP server for remote control" ON)
 feature_option(PLUGINS "Enable built-in Lua plugins engine" ON)
 feature_option(STACKTRACE "Enable stacktrace support" ON)
 feature_option(TESTING "Build internal testing suite" OFF)
-feature_option_dependent(EMBARR_ENGINE
-    "Build the headless Embarr download engine (embarr-engine) instead of qbittorrent-nox"
-    OFF "NOT GUI;WEBUI" OFF
-)
+feature_option(EMBARR_ENGINE "Build the headless Embarr download engine (embarr-engine) instead of qbittorrent-nox" OFF)
 feature_option(VERBOSE_CONFIGURE "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure output (only useful for debugging the CMake build scripts)" OFF)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
@@ -44,6 +41,15 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
         "Install systemd service file. Target directory is overridable with `SYSTEMD_SERVICES_INSTALL_DIR` variable"
         OFF "NOT GUI" OFF
     )
+endif()
+
+if (EMBARR_ENGINE)
+    if (GUI OR NOT WEBUI)
+        message(FATAL_ERROR "EMBARR_ENGINE requires GUI=OFF and WEBUI=ON")
+    endif()
+    if (SYSTEMD)
+        message(FATAL_ERROR "EMBARR_ENGINE can't be combined with SYSTEMD: Embarr starts and supervises the engine itself")
+    endif()
 endif()
 
 if (MSVC)
