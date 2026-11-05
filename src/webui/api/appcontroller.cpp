@@ -1022,10 +1022,13 @@ void AppController::setPreferencesAction()
         RSS::Session::instance()->setFetchDelay(std::chrono::seconds(it.value().toLongLong()));
     if (hasKey(u"rss_max_articles_per_feed"_s))
         RSS::Session::instance()->setMaxArticlesPerFeed(it.value().toInt());
+#ifndef EMBARR_ENGINE
+    // In embarr-engine RSS processing and auto-downloading stay off: Embarr fetches feeds and grabs releases itself.
     if (hasKey(u"rss_processing_enabled"_s))
         RSS::Session::instance()->setProcessingEnabled(it.value().toBool());
     if (hasKey(u"rss_auto_downloading_enabled"_s))
         RSS::AutoDownloader::instance()->setProcessingEnabled(it.value().toBool());
+#endif
     if (hasKey(u"rss_download_repack_proper_episodes"_s))
         RSS::AutoDownloader::instance()->setDownloadRepacks(it.value().toBool());
     if (hasKey(u"rss_smart_episode_filters"_s))

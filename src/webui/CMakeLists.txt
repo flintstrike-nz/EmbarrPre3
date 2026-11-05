@@ -42,7 +42,10 @@ add_library(qbt_webui STATIC
     webui.cpp
 )
 
-target_sources(qbt_webui INTERFACE www/webui.qrc)
+# embarr-engine serves only the API: the WebUI's own files aren't built in.
+if (NOT EMBARR_ENGINE)
+    target_sources(qbt_webui INTERFACE www/webui.qrc)
+endif()
 
 target_link_libraries(qbt_webui PRIVATE qbt_base)
 
