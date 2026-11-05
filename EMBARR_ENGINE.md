@@ -36,8 +36,19 @@ Embarr shows qBittorrent's legal notice to the user itself, so it passes `--conf
 | Search engine | off, and the `search` API isn't registered | Embarr searches indexers itself |
 | `.!qB` extension for incomplete files | on | Embarr downloads straight into the library |
 | "Unwanted" folder | off | Unwanted files are never downloaded |
+| RSS processing and auto-downloading | off, can't be turned on through `setPreferences`, and the `rss` API isn't registered | Embarr fetches feeds and grabs releases itself |
 
 The temporary WebUI password is not printed in engine mode.
+
+## What engine mode leaves out
+
+- **The web interface.** The WebUI's own files (`src/webui/www`) aren't built in, and any request outside `/api` gets `404`. Embarr is the only interface.
+- **The `search`, `rss` and `torrentcreator` APIs.** These aren't registered, so they return `404`.
+- **The GUI.** `src/gui` isn't built (`GUI=OFF`).
+
+These parts are switched off in the build rather than deleted, so upstream qBittorrent changes still merge cleanly.
+
+The API calls Embarr relies on, beyond what qBittorrent's own clients use, are `transfer/info`, `transfer/speedLimitsMode`, `transfer/toggleSpeedLimitsMode`, `torrents/start` / `torrents/stop` (with `hashes=all`) and `torrents/recheck`. Keep them when trimming further.
 
 Every request must carry the API key (`X-API-Key` or `Authorization: Bearer`). Password logins, Basic authentication and cookie sessions are refused even if a WebUI password is saved in the profile.
 

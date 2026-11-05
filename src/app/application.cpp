@@ -976,6 +976,11 @@ int Application::exec()
 
         new RSS::Session; // create RSS::Session singleton
         new RSS::AutoDownloader(this); // create RSS::AutoDownloader singleton
+#ifdef EMBARR_ENGINE
+        // Embarr fetches feeds and grabs releases itself; the engine never processes RSS.
+        RSS::Session::instance()->setProcessingEnabled(false);
+        RSS::AutoDownloader::instance()->setProcessingEnabled(false);
+#endif
 
 #ifndef DISABLE_GUI
         const auto *btSession = BitTorrent::Session::instance();
