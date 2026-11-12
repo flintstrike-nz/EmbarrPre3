@@ -42,13 +42,13 @@ add_library(qbt_webui STATIC
     webui.cpp
 )
 
-# embarr-engine serves only the API: the WebUI's own files aren't built in.
-if (NOT EMBARR_ENGINE)
+# cinnabarr-engine serves only the API: the WebUI's own files aren't built in.
+if (NOT CINNABARR_ENGINE)
     target_sources(qbt_webui INTERFACE www/webui.qrc)
 endif()
 
 target_link_libraries(qbt_webui PRIVATE qbt_base)
 
-if (EMBARR_ENGINE)
-    target_compile_definitions(qbt_webui PRIVATE EMBARR_ENGINE)
+if (CINNABARR_ENGINE)
+    target_compile_definitions(qbt_webui PRIVATE CINNABARR_ENGINE)
 endif()
