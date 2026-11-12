@@ -192,8 +192,8 @@ WebApplication::~WebApplication()
 
 void WebApplication::sendWebUIFile(const Http::HeaderMap &commonHeaders, Http::ResponseWriter &responseWriter)
 {
-#ifdef EMBARR_ENGINE
-    // embarr-engine is a private API with no web interface: its files aren't built in.
+#ifdef CINNABARR_ENGINE
+    // cinnabarr-engine is a private API with no web interface: its files aren't built in.
     Q_UNUSED(commonHeaders);
     Q_UNUSED(responseWriter);
     throw NotFoundHTTPError();
@@ -698,8 +698,8 @@ void WebApplication::processRequest(const Http::Request &request, const Http::En
 
     try
     {
-#ifdef EMBARR_ENGINE
-        // embarr-engine is only reachable with the API key Embarr passes in. Password
+#ifdef CINNABARR_ENGINE
+        // cinnabarr-engine is only reachable with the API key Cinnabarr passes in. Password
         // logins, Basic auth and cookie sessions are refused even if a password is saved.
         if (!isUsingApiKey)
             throw UnauthorizedHTTPError();
@@ -922,8 +922,8 @@ void WebApplication::sessionStartImpl(const QString &sessionId, const WebSession
 
     m_currentSession->registerAPIController(u"app"_s, [app = app(), parent = m_currentSession] { return new AppController(app, parent); });
     m_currentSession->registerAPIController(u"log"_s, [app = app(), parent = m_currentSession] { return new LogController(app, parent); });
-#ifndef EMBARR_ENGINE
-    // Embarr fetches RSS feeds itself; the engine exposes no RSS API.
+#ifndef CINNABARR_ENGINE
+    // Cinnabarr fetches RSS feeds itself; the engine exposes no RSS API.
     m_currentSession->registerAPIController(u"rss"_s, [app = app(), parent = m_currentSession] { return new RSSController(app, parent); });
 #endif
     m_currentSession->registerAPIController(u"torrents"_s, [app = app(), parent = m_currentSession] { return new TorrentsController(app, parent); });
@@ -933,16 +933,16 @@ void WebApplication::sessionStartImpl(const QString &sessionId, const WebSession
     {
         return new ClientDataController(clientDataStorage, app, parent);
     });
-#ifndef EMBARR_ENGINE
-    // Embarr doesn't create torrents.
+#ifndef CINNABARR_ENGINE
+    // Cinnabarr doesn't create torrents.
     m_currentSession->registerAPIController(u"torrentcreator"_s
             , [app = app(), parent = m_currentSession, torrentCreationManager = m_torrentCreationManager]
     {
         return new TorrentCreatorController(torrentCreationManager, app, parent);
     });
 #endif
-#ifndef EMBARR_ENGINE
-    // Embarr searches indexers itself; the engine exposes no search API.
+#ifndef CINNABARR_ENGINE
+    // Cinnabarr searches indexers itself; the engine exposes no search API.
     m_currentSession->registerAPIController(u"search"_s
             , [app = app(), parent = m_currentSession, searchJobManager = m_searchJobManager]
     {

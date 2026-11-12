@@ -1,6 +1,6 @@
 /*
  * Bittorrent Client using Qt and libtorrent.
- * Copyright (C) 2026  Embarr contributors
+ * Copyright (C) 2026  Cinnabarr contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,14 +28,14 @@
 
 #pragma once
 
-// Settings for running as Embarr's headless download engine ("embarr-engine").
-// Embarr starts the engine as a child process and is its only client, so the
+// Settings for running as Cinnabarr's headless download engine ("cinnabarr-engine").
+// Cinnabarr starts the engine as a child process and is its only client, so the
 // engine is reachable on the loopback interface only and only with an API key
-// that Embarr passes in the environment.
-namespace EmbarrEngine
+// that Cinnabarr passes in the environment.
+namespace CinnabarrEngine
 {
     // Name of the environment variable that carries the WebUI API key.
-    inline constexpr char API_KEY_ENV[] = "EMBARR_ENGINE_API_KEY";
+    inline constexpr char API_KEY_ENV[] = "CINNABARR_ENGINE_API_KEY";
 
     // Applies the forced engine settings. Throws RuntimeError if the API key is
     // missing or invalid, because the engine must never run without one.

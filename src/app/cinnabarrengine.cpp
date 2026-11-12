@@ -1,6 +1,6 @@
 /*
  * Bittorrent Client using Qt and libtorrent.
- * Copyright (C) 2026  Embarr contributors
+ * Copyright (C) 2026  Cinnabarr contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
  * exception statement from your version.
  */
 
-#include "embarrengine.h"
+#include "cinnabarrengine.h"
 
 #include <algorithm>
 
@@ -39,7 +39,7 @@
 #include "base/settingvalue.h"
 #include "base/utils/apikey.h"
 
-void EmbarrEngine::applySettings()
+void CinnabarrEngine::applySettings()
 {
     const QString apiKey = qEnvironmentVariable(API_KEY_ENV);
 
@@ -52,13 +52,13 @@ void EmbarrEngine::applySettings()
 
     if (!isWellFormed)
     {
-        throw RuntimeError(QCoreApplication::translate("EmbarrEngine"
-            , "%1 is missing or invalid. embarr-engine must be started by Embarr.").arg(QString::fromLatin1(API_KEY_ENV)));
+        throw RuntimeError(QCoreApplication::translate("CinnabarrEngine"
+            , "%1 is missing or invalid. cinnabarr-engine must be started by Cinnabarr.").arg(QString::fromLatin1(API_KEY_ENV)));
     }
 
     auto *pref = Preferences::instance();
 
-    // Private API for Embarr only: loopback, plain HTTP, API key required.
+    // Private API for Cinnabarr only: loopback, plain HTTP, API key required.
     pref->setWebUIEnabled(true);
     pref->setWebUIAddress(u"127.0.0.1"_s);
     pref->setUPnPForWebUIPort(false);
@@ -68,10 +68,10 @@ void EmbarrEngine::applySettings()
     pref->setWebUIAuthSubnetWhitelistEnabled(false);
     pref->setWebUIApiKey(apiKey);
 
-    // Embarr searches indexers itself.
+    // Cinnabarr searches indexers itself.
     pref->setSearchEnabled(false);
 
-    // Embarr downloads straight to the final library path: incomplete files keep
+    // Cinnabarr downloads straight to the final library path: incomplete files keep
     // the ".!qB" suffix, and unwanted files are never moved into a visible folder.
     SettingValue<bool> {u"BitTorrent/Session/AddExtensionToIncompleteFiles"_s} = true;
     SettingValue<bool> {u"BitTorrent/Session/UseUnwantedFolder"_s} = false;

@@ -75,8 +75,8 @@ void WebUI::configure()
     {
         const quint16 port = pref->getWebUIPort();
 
-#ifdef EMBARR_ENGINE
-        // embarr-engine's API is private to Embarr: always loopback, plain HTTP and never
+#ifdef CINNABARR_ENGINE
+        // cinnabarr-engine's API is private to Cinnabarr: always loopback, plain HTTP and never
         // port-forwarded, whatever the preferences say (they can be changed at runtime).
         const bool useUPnP = false;
         const QString serverAddressString = u"127.0.0.1"_s;
@@ -151,8 +151,8 @@ void WebUI::configure()
             }
         }
 
-        // DynDNS (never in embarr-engine: its API isn't reachable from outside)
-#ifdef EMBARR_ENGINE
+        // DynDNS (never in cinnabarr-engine: its API isn't reachable from outside)
+#ifdef CINNABARR_ENGINE
         const bool useDynDNS = false;
 #else
         const bool useDynDNS = pref->isDynDNSEnabled();
